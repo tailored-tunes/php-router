@@ -1,0 +1,26 @@
+{
+    "name": "tailored-tunes/php-router",
+    "description": "A lightweight router solution",
+    "type": "library",
+    "keywords": ["routing"],
+    "license": "GPLV2",
+    "authors": [
+        {
+            "name": "Meza",
+            "email": "meza@tailored-tunes.com",
+            "homepage": "http://tailored-tunes.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "TailoredTunes\\": "src/TailoredTunes/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*",
+        "squizlabs/php_codesniffer": "1.*"
+    }
+}
