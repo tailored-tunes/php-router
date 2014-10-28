@@ -45,6 +45,9 @@ class Router
         }
         $route = $this->routingTable[$effectiveUri];
         $handler = $route->forVerb($httpMethod);
+        if (null == $handler) {
+            throw new PathNotFoundException($httpMethod.' - '.$effectiveUri);
+        }
         $handler->addParameters($route->parameters($uri));
         $handler->addParameters($params);
         return $handler;

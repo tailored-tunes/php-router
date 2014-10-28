@@ -1,6 +1,8 @@
 <?php
 namespace TailoredTunes\Router;
 
+use Exception;
+
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -40,6 +42,16 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testBadVerb()
+    {
+        try {
+
+            $this->object->handle("/post", "GET");
+            $this->fail();
+        } catch (PathNotFoundException $e) {
+        }
+    }
+
     public function testParams()
     {
         $expected = new RoutePart("Index#handle");
@@ -65,7 +77,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             $actual->parameters(),
             "Parameters not resolved"
         );
-
     }
 
     /**
@@ -77,7 +88,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider      lofasz()
+     * @dataProvider      provider()
      * @expectedException Exception
      */
     public function testFaultyCreation($param)
@@ -85,7 +96,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $this->object->addRoutes($param);
     }
 
-    public function lofasz()
+    public function provider()
     {
         return array(array(""), array(1), array(null), array(true),
             array(false));
@@ -101,6 +112,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     {
         $table = array(array("/" => "Index#home"),
             array("/" => "Index#post", "via" => "POST"),
+            array("/post" => "Index#postit", "via" => "POST"),
             array("/a/y" => "Index#handle"));
         return $table;
     }
