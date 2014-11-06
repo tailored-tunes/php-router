@@ -51,7 +51,7 @@ class Route
     public function parameters($uri)
     {
         $a = $this->uri;
-        $pattern = "/" . addcslashes(preg_replace("/:([^\/])+/", "(?P<$1>.+)", $a), "/") . "/";
+        $pattern = "/^" . addcslashes(preg_replace("/:([^\/]+)/", "(?P<$1>[^/]+)", $a), "/") . "$/";
         preg_match($pattern, $uri, $m);
         $m = $this->removeTheBaseUrl($m);
         return $m;

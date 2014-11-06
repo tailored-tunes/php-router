@@ -41,7 +41,7 @@ class Router
         $effectiveUri = $url["path"];
         if (!array_key_exists($effectiveUri, $this->routingTable)) {
             foreach (array_keys($this->routingTable) as $path) {
-                $pattern = "/^" . addcslashes(preg_replace("/:([^\/])+/", "(?P<$1>[^/]+)", $path), "/") . "$/";
+                $pattern = "/^" . addcslashes(preg_replace("/:([^\/]+)/", "(?P<$1>[^/]+)", $path), "/") . "$/";
                 if (preg_match($pattern, $uri, $m) === 1) {
                     array_pop($m);
                     if (count($m) > 0) {
