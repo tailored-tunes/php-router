@@ -42,6 +42,38 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSimpleRoute3()
+    {
+        $expected = new RoutePart("Index#handle2");
+        $actual = $this->object->handle("/lala", "POST");
+        $this->assertEquals(
+            $expected->controller(),
+            $actual->controller(),
+            "Route controller was not resolved correctly"
+        );
+        $this->assertEquals(
+            $expected->action(),
+            $actual->action(),
+            "Route action was not resolved correctly"
+        );
+    }
+
+    public function testSimpleRoute4()
+    {
+        $expected = new RoutePart("Index#handle3");
+        $actual = $this->object->handle("/lala/1", "POST");
+        $this->assertEquals(
+            $expected->controller(),
+            $actual->controller(),
+            "Route controller was not resolved correctly"
+        );
+        $this->assertEquals(
+            $expected->action(),
+            $actual->action(),
+            "Route action was not resolved correctly"
+        );
+    }
+
     public function testBadVerb()
     {
         try {
@@ -113,7 +145,10 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $table = array(array("/" => "Index#home"),
             array("/" => "Index#post", "via" => "POST"),
             array("/post" => "Index#postit", "via" => "POST"),
-            array("/a/y" => "Index#handle"));
+            array("/a/y" => "Index#handle"),
+            array("/:a" => "Index#handle2"),
+            array("/:a/:b" => "Index#handle3"),
+        );
         return $table;
     }
 }

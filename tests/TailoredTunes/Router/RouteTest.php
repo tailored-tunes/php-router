@@ -33,4 +33,12 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $actual = $a->parameters("/a/geza/c");
         $this->assertEquals($expected["b"], $actual["b"]);
     }
+
+    public function testRegex2()
+    {
+        $expected = array("b" => "geza");
+        $a = new Route("/:b");
+        $actual = $a->parameters("/geza");
+        $this->assertEquals($expected["b"], $actual["b"]);
+    }
 }

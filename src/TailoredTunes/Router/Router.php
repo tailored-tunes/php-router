@@ -27,7 +27,6 @@ class Router
             $x->addConfig($routeConfig);
             $this->routingTable[$uri] = $x;
         }
-
     }
 
     /**
@@ -41,16 +40,29 @@ class Router
         $url = parse_url($uri);
         $effectiveUri = $url["path"];
         if (!array_key_exists($effectiveUri, $this->routingTable)) {
-            throw new PathNotFoundException($effectiveUri);
+            foreach (array_keys($this->routingTable) as $path) {
+                $pattern = "/^" . addcslashes(preg_replace("/:([^\/])+/", "(?P<$1>[^/]+)", $path), "/") . "$/";
+                if (preg_match($pattern, $uri, $m) === 1) {
+                    array_pop($m);
+                    if (count($m) > 0) {
+//                        var_dump($uri, $path, $pattern, $m);
+                        $route = $this->routingTable[$path];
+                    }
+                }
+            }
+            if (!isset($route)) {
+                throw new PathNotFoundException($effectiveUri);
+            }
         }
-        $route = $this->routingTable[$effectiveUri];
+        if (!isset($route)) {
+            $route = $this->routingTable[$effectiveUri];
+        }
         $handler = $route->forVerb($httpMethod);
         if (null == $handler) {
-            throw new PathNotFoundException($httpMethod.' - '.$effectiveUri);
+            throw new PathNotFoundException($httpMethod . ' - ' . $effectiveUri);
         }
         $handler->addParameters($route->parameters($uri));
         $handler->addParameters($params);
         return $handler;
-
     }
 }
