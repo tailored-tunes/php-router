@@ -7,7 +7,7 @@ class Router
     /**
      * @var Route[]
      */
-    private $routingTable = array();
+    private $routingTable = [];
 
     public function addRoutes(Array $routingTable)
     {
@@ -21,7 +21,7 @@ class Router
             } else {
                 $x = new Route($uri);
             }
-            $z = array(Route::HANDLER => $route[$keys[0]]);
+            $z = [Route::HANDLER => $route[$keys[0]]];
             unset($route[$uri]);
             $routeConfig = array_merge($z, $route);
             $x->addConfig($routeConfig);
@@ -30,13 +30,24 @@ class Router
     }
 
     /**
-     * @param $uri
-     * @param $httpMethod
+     * @param       $uri
+     * @param       $httpMethod
      *
+     * @param array $params
      * @return null|RoutePart
+     * @throws PathNotFoundException
      */
-    public function handle($uri, $httpMethod, $params = array())
+    public function handle($uri, $httpMethod, $params = [])
     {
+        if (strlen($uri) > 1 && substr($uri, -1) == '/') {
+            $uri = substr($uri, 0, -1);
+        }
+
+        $qstrPos = strpos($uri, '?');
+        if (!($qstrPos === false)) {
+            $uri = substr($uri, 0, $qstrPos);
+        }
+
         $url = parse_url($uri);
         $effectiveUri = $url["path"];
         if (!array_key_exists($effectiveUri, $this->routingTable)) {
@@ -45,7 +56,6 @@ class Router
                 if (preg_match($pattern, $uri, $m) === 1) {
                     array_pop($m);
                     if (count($m) > 0) {
-//                        var_dump($uri, $path, $pattern, $m);
                         $route = $this->routingTable[$path];
                     }
                 }

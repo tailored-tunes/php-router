@@ -15,7 +15,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $this->route = new Route($this->path);
     }
 
-    public function testStuff()
+    public function testParsing()
     {
         $config = array(Route::HANDLER => "A#b");
         $this->route->addConfig($config);
