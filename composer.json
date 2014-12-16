@@ -3,7 +3,7 @@
     "description": "A lightweight router solution",
     "type": "library",
     "keywords": ["routing"],
-    "license": "GPLV2",
+    "license": "MIT",
     "authors": [
         {
             "name": "Meza",
