@@ -78,7 +78,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testSimpleRoute4()
     {
         $expected = new RoutePart("Index#handle3");
-        $actual = $this->object->handle("/lala/1", "POST");
+        $actual = $this->object->handle("/lala/1", "GET");
         $this->assertEquals(
             $expected->controller(),
             $actual->controller(),
@@ -94,7 +94,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testTrailingSlash()
     {
         $expected = new RoutePart("Index#handle3");
-        $actual = $this->object->handle("/lala/1/", "POST");
+        $actual = $this->object->handle("/lala/1/", "GET");
         $this->assertEquals(
             $expected->controller(),
             $actual->controller(),
