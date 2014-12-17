@@ -44,8 +44,25 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testSimpleRoute3()
     {
+        $expected = new RoutePart("Index#postit");
+        $actual = $this->object->handle("/post", "POST");
+        $this->assertEquals(
+            $expected->controller(),
+            $actual->controller(),
+            "Route controller was not resolved correctly"
+        );
+        $this->assertEquals(
+            $expected->action(),
+            $actual->action(),
+            "Route action was not resolved correctly"
+        );
+    }
+
+
+    public function testSimpleRoute31()
+    {
         $expected = new RoutePart("Index#handle2");
-        $actual = $this->object->handle("/lala", "POST");
+        $actual = $this->object->handle("/lala", "GET");
         $this->assertEquals(
             $expected->controller(),
             $actual->controller(),
@@ -109,9 +126,8 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testBadVerb()
     {
         try {
-
-            $this->object->handle("/post", "GET");
-            $this->fail();
+            $this->object->handle("/something", "POST");
+            $this->fail("A bad verb was handled");
         } catch (PathNotFoundException $e) {
         }
     }
