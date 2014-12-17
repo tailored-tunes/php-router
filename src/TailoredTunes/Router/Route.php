@@ -24,7 +24,7 @@ class Route
     {
         if (is_array($routeConfig)) {
             if (!array_key_exists(self::VIA, $routeConfig)) {
-                $routeConfig[self::VIA] = "DEFAULT";
+                $routeConfig[self::VIA] = "GET";
             }
             $this->s[$routeConfig[self::VIA]] =
                 new RoutePart($routeConfig[self::HANDLER]);
@@ -41,10 +41,8 @@ class Route
         if (array_key_exists($string, $this->s)) {
             return $this->s[$string];
         }
-        if ($string == "DEFAULT") {
-            return null;
-        }
-        return $this->forVerb("DEFAULT");
+
+        return null;
 
     }
 
