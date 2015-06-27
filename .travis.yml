@@ -4,11 +4,10 @@ php:
 - '5.4'
 
 install:
-   - composer install --dev
+   - npm install
 
 script:
-  - ./vendor/bin/phpcs --standard=PSR2 src/ tests/
-  - ./vendor/bin/phpunit --bootstrap ./tests/bootstrap.php tests/
+  - ./node_modules/.bin/grunt
 
 notifications:
   slack: tatu:ifWJMnOS9BlzH3pxQfJryUUz

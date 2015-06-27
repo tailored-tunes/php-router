@@ -68,10 +68,7 @@ class Router
         if (!isset($route)) {
             $route = $this->routingTable[$effectiveUri];
         }
-        $handler = $route->forVerb($httpMethod);
-        if (null == $handler) {
-            throw new PathNotFoundException($httpMethod . ' - ' . $effectiveUri);
-        }
+        $handler = $this->getHandlerForUri($httpMethod, $route, $effectiveUri);
         $handler->addParameters($route->parameters($uri));
         $handler->addParameters($params);
         return $handler;
@@ -120,5 +117,21 @@ class Router
             return $needRegex;
         }
         return $needRegex;
+    }
+
+    /**
+     * @param $httpMethod
+     * @param $route
+     * @param $effectiveUri
+     * @return mixed
+     * @throws PathNotFoundException
+     */
+    private function getHandlerForUri($httpMethod, $route, $effectiveUri)
+    {
+        $handler = $route->forVerb($httpMethod);
+        if ($handler == null) {
+            throw new PathNotFoundException($httpMethod . ' - ' . $effectiveUri);
+        }
+        return $handler;
     }
 }
