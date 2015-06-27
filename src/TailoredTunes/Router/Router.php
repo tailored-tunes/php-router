@@ -8,6 +8,16 @@ class Router
      * @var Route[]
      */
     private $routingTable = [];
+    /**
+     * @var RouteParameterMatchGenerator
+     */
+    private $magic;
+
+    public function __construct(RouteParameterMatchGenerator $magic)
+    {
+
+        $this->magic = $magic;
+    }
 
     public function addRoutes(Array $routingTable)
     {
@@ -46,28 +56,8 @@ class Router
         $url = parse_url($uri);
         $effectiveUri = $url["path"];
 
-        $needRegex = $this->needRegex($httpMethod, $effectiveUri);
+        $route = $this->getRouteForUriAndMethod($httpMethod, $effectiveUri);
 
-        if ($needRegex) {
-            foreach (array_keys($this->routingTable) as $path) {
-                if ($path === $effectiveUri) {
-                    continue;
-                }
-                $pattern = "/^" . addcslashes(preg_replace("/:([^\/]+)/", "(?P<$1>[^/]+)", $path), "/") . "$/";
-                if (preg_match($pattern, $effectiveUri, $matches) === 1) {
-                    array_pop($matches);
-                    if (count($matches) > 0) {
-                        $route = $this->routingTable[$path];
-                    }
-                }
-            }
-            if (!isset($route)) {
-                throw new PathNotFoundException($effectiveUri);
-            }
-        }
-        if (!isset($route)) {
-            $route = $this->routingTable[$effectiveUri];
-        }
         $handler = $this->getHandlerForUri($httpMethod, $route, $effectiveUri);
         $handler->addParameters($route->parameters($uri));
         $handler->addParameters($params);
@@ -133,5 +123,59 @@ class Router
             throw new PathNotFoundException($httpMethod . ' - ' . $effectiveUri);
         }
         return $handler;
+    }
+
+    /**
+     * @param $effectiveUri
+     * @return Route
+     * @throws PathNotFoundException
+     */
+    private function fallbackToDefault($effectiveUri)
+    {
+        if (!array_key_exists($effectiveUri, $this->routingTable)) {
+            throw new PathNotFoundException($effectiveUri);
+        }
+        $route = $this->routingTable[$effectiveUri];
+        return $route;
+    }
+
+    /**
+     * @param $effectiveUri
+     * @return Route
+     * @throws PathNotFoundException
+     */
+    private function getResolvedRoute($effectiveUri)
+    {
+        foreach (array_keys($this->routingTable) as $path) {
+            $pattern = $this->magic->getRegexPattern($path);
+
+            if (preg_match($pattern, $effectiveUri, $matches) === 1) {
+                array_pop($matches);
+                if (count($matches) > 0) {
+                    return $this->routingTable[$path];
+                }
+            }
+        }
+
+        throw new PathNotFoundException($effectiveUri);
+    }
+
+    /**
+     * @param $httpMethod
+     * @param $effectiveUri
+     * @return Route
+     * @throws PathNotFoundException
+     */
+    private function getRouteForUriAndMethod($httpMethod, $effectiveUri)
+    {
+        $needRegex = $this->needRegex($httpMethod, $effectiveUri);
+        try {
+            if ($needRegex) {
+                return $this->getResolvedRoute($effectiveUri);
+            }
+            return $this->fallbackToDefault($effectiveUri);
+        } catch (PathNotFoundException $exception) {
+            return $this->fallbackToDefault($effectiveUri);
+        }
     }
 }

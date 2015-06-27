@@ -1,7 +1,9 @@
 <?php
 namespace TailoredTunes\Router;
 
-use Exception;
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
@@ -122,6 +124,14 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException \TailoredTunes\Router\PathNotFoundException
+     */
+    public function testPathNotFounds()
+    {
+        $this->object->handle("/gib/be/rish", "GET");
+    }
+
     public function testBadVerb()
     {
         try {
@@ -166,7 +176,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->object = new Router();
+        $this->object = new Router(new RouteParameterMatchGenerator());
         $this->object->addRoutes($this->setUpRoutingTable());
     }
 
