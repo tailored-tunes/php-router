@@ -45,14 +45,14 @@ then it's up to you to map it to a controller.
 // $params = parameters for the request.
 
 $requestParamBuilder = new RequestParamBuilder();
-	$requestParamBuilder->withEnv($_ENV)
-		->withRequest($_REQUEST)
-		->withCookies($_COOKIE)
-		->withFiles($_FILES)
-		->withServer($_SERVER)
-		->withSession($_SESSION);
+$requestParamBuilder->withEnv($_ENV)
+	->withRequest($_REQUEST)
+	->withCookies($_COOKIE)
+	->withFiles($_FILES)
+	->withServer($_SERVER)
+	->withSession($_SESSION);
 
-	$params = new RequestParams($requestParamBuilder);
+$params = new RequestParams($requestParamBuilder);
 
 $handler = $router->handle($uri, $method, $params);
 
