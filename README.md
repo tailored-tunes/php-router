@@ -42,11 +42,21 @@ then it's up to you to map it to a controller.
 ```php
 // $uri = the request uri
 // $method = the request method
-// $params = parameters for the request. Could be from query string, post, etc. You decide!
+// $params = parameters for the request.
+
+$requestParamBuilder = new RequestParamBuilder();
+	$requestParamBuilder->withEnv($_ENV)
+		->withRequest($_REQUEST)
+		->withCookies($_COOKIE)
+		->withFiles($_FILES)
+		->withServer($_SERVER)
+		->withSession($_SESSION);
+
+	$params = new RequestParams($requestParamBuilder);
 
 $handler = $router->handle($uri, $method, $params);
 
 // serve request
-call_user_func_array(array($handler->controller(), $handler->action()),array($handler->parameters()));
+call_user_func_array(array($handler->controller(), $handler->action()), $handler->parameters());
 
 ```
