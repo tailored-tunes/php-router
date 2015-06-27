@@ -1,63 +1,95 @@
 <?php
 namespace TailoredTunes\Router;
 
-class Route
-{
+class Route {
 
-    const HANDLER = "handler";
-    const VIA = "via";
+	/**
+	 *
+	 */
+	const HANDLER = 'handler';
+	/**
+	 *
+	 */
+	const VIA = 'via';
 
-    /**
-     * @var RoutePart[]
-     */
-    private $routeParts = array();
+	/**
+	 * @var RoutePart[]
+	 */
+	private $routeParts = [];
 
-    private $uri;
+	/**
+	 * @var string
+	 */
+	private $uri;
+	/**
+	 * @var \TailoredTunes\Router\RouteParameterMatchGenerator
+	 */
+	private $matcher;
 
-    public function __construct($uri)
-    {
-        $this->uri = $uri;
+	/**
+	 * @param string                                             $uri
+	 * @param \TailoredTunes\Router\RouteParameterMatchGenerator $matcher
+	 */
+	public function __construct($uri, RouteParameterMatchGenerator $matcher) {
+		$this->uri = $uri;
 
-    }
+		$this->matcher = $matcher;
+	}
 
-    public function addConfig($routeConfig)
-    {
-        if (is_array($routeConfig)) {
-            if (!array_key_exists(self::VIA, $routeConfig)) {
-                $routeConfig[self::VIA] = "GET";
-            }
-            $this->routeParts[$routeConfig[self::VIA]] =
-                new RoutePart($routeConfig[self::HANDLER]);
-        }
-    }
+	/**
+	 * @param array $routeConfig
+	 *
+	 * @return void
+	 */
+	public function addConfig(array $routeConfig) {
+		if (is_array($routeConfig)) {
+			if (!array_key_exists(self::VIA, $routeConfig)) {
+				$routeConfig[self::VIA] = 'GET';
+			}
 
-    /**
-     * @param String $string http verb
-     *
-     * @return RoutePart
-     */
-    public function forVerb($string)
-    {
-        if (array_key_exists($string, $this->routeParts)) {
-            return $this->routeParts[$string];
-        }
+			$this->routeParts[$routeConfig[self::VIA]]
+				= new RoutePart($routeConfig[self::HANDLER]);
+		}
+	}
 
-        return null;
+	/**
+	 * @param string $verb
+	 *
+	 * @return RoutePart
+	 */
+	public function forVerb($verb) {
+		if (array_key_exists($verb, $this->routeParts)) {
+			return $this->routeParts[$verb];
+		}
 
-    }
+		return null;
+	}
 
-    public function parameters($uri)
-    {
-        $internalUri = $this->uri;
-        $pattern = "/^" . addcslashes(preg_replace("/:([^\/]+)/", "(?P<$1>[^/]+)", $internalUri), "/") . "$/";
-        preg_match($pattern, $uri, $matches);
-        $matches = $this->removeTheBaseUrl($matches);
-        return $matches;
-    }
+	/**
+	 * @param string $uri
+	 *
+	 * @return array
+	 */
+	public function parameters($uri) {
+		$internalUri = $this->uri;
+		$pattern = $this->matcher->getRegexPattern($internalUri);
+		preg_match($pattern, $uri, $matches);
+		$matches = $this->removeTheBaseUrl($matches);
 
-    private function removeTheBaseUrl($matches)
-    {
-        array_shift($matches);
-        return $matches;
-    }
+		return $matches;
+	}
+
+	/**
+	 * @param array $matches
+	 *
+	 * @return mixed
+	 */
+	private function removeTheBaseUrl(array $matches) {
+		array_shift($matches);
+
+		return $matches;
+	}
+
 }
+
+?>

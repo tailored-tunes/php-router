@@ -21,6 +21,12 @@ module.exports = function (grunt, options) {
 				spawn: false
 			}
 		},
+		phpcsConfig: {
+			files: options.configDir + '/checktyle-ruleset.xml',
+			tasks: [
+				'phpcs'
+			]
+		},
 		phpmdConfig: {
 			files: [
 				options.configDir + '/phpmd-ruleset.xml',

@@ -5,7 +5,8 @@ module.exports = function(grunt) {
 	var options = {
 		phpSources: [
 			'**/*.php',
-			'!vendor/**/*'
+			'!vendor/**/*',
+			'!node_modules/**/*'
 		],
 		testFiles: 'tests/',
 		configDir: 'config',

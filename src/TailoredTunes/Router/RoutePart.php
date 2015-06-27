@@ -1,52 +1,62 @@
 <?php
 namespace TailoredTunes\Router;
 
-class RoutePart
-{
+class RoutePart {
 
-    /**
-     * @var String
-     */
-    private $controller;
+	/**
+	 * @var string
+	 */
+	private $controller;
 
-    /**
-     * @var String
-     */
-    private $action;
+	/**
+	 * @var string
+	 */
+	private $action;
 
-    /**
-     * @var array
-     */
-    private $paramteres = array();
+	/**
+	 * @var array
+	 */
+	private $paramteres = [];
 
-    /**
-     * @param $routeString
-     */
-    public function __construct($routeString)
-    {
-        $parts = explode("#", $routeString);
-        $this->controller = $parts[0];
-        $this->action = $parts[1];
+	/**
+	 * @param string $routeString
+	 */
+	public function __construct($routeString) {
+		$parts = explode('#', $routeString);
+		$this->controller = $parts[0];
+		$this->action = $parts[1];
+	}
 
-    }
+	/**
+	 * @return string
+	 */
+	public function controller() {
+		return $this->controller;
+	}
 
-    public function controller()
-    {
-        return $this->controller;
-    }
+	/**
+	 * @return string
+	 */
+	public function action() {
+		return $this->action;
+	}
 
-    public function action()
-    {
-        return $this->action;
-    }
+	/**
+	 * @param array $params
+	 *
+	 * @return void
+	 */
+	public function addParameters(array $params) {
+		$this->paramteres = array_merge($this->paramteres, $params);
+	}
 
-    public function addParameters(Array $params)
-    {
-        $this->paramteres = array_merge($this->paramteres, $params);
-    }
+	/**
+	 * @return array
+	 */
+	public function parameters() {
+		return $this->paramteres;
+	}
 
-    public function parameters()
-    {
-        return $this->paramteres;
-    }
 }
+
+?>
