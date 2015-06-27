@@ -5,3 +5,5 @@ class PathNotFoundException extends \Exception
 {
 
 }
+
+?>
