@@ -10,7 +10,7 @@ class Route
     /**
      * @var RoutePart[]
      */
-    private $s = array();
+    private $routeParts = array();
 
     private $uri;
 
@@ -26,7 +26,7 @@ class Route
             if (!array_key_exists(self::VIA, $routeConfig)) {
                 $routeConfig[self::VIA] = "GET";
             }
-            $this->s[$routeConfig[self::VIA]] =
+            $this->routeParts[$routeConfig[self::VIA]] =
                 new RoutePart($routeConfig[self::HANDLER]);
         }
     }
@@ -38,8 +38,8 @@ class Route
      */
     public function forVerb($string)
     {
-        if (array_key_exists($string, $this->s)) {
-            return $this->s[$string];
+        if (array_key_exists($string, $this->routeParts)) {
+            return $this->routeParts[$string];
         }
 
         return null;
@@ -48,16 +48,16 @@ class Route
 
     public function parameters($uri)
     {
-        $a = $this->uri;
-        $pattern = "/^" . addcslashes(preg_replace("/:([^\/]+)/", "(?P<$1>[^/]+)", $a), "/") . "$/";
-        preg_match($pattern, $uri, $m);
-        $m = $this->removeTheBaseUrl($m);
-        return $m;
+        $internalUri = $this->uri;
+        $pattern = "/^" . addcslashes(preg_replace("/:([^\/]+)/", "(?P<$1>[^/]+)", $internalUri), "/") . "$/";
+        preg_match($pattern, $uri, $matches);
+        $matches = $this->removeTheBaseUrl($matches);
+        return $matches;
     }
 
-    private function removeTheBaseUrl($m)
+    private function removeTheBaseUrl($matches)
     {
-        array_shift($m);
-        return $m;
+        array_shift($matches);
+        return $matches;
     }
 }

@@ -10,15 +10,15 @@ class RoutePartTest extends \PHPUnit_Framework_TestCase
 
     public function testBasic()
     {
-        $rp = new RoutePart("A#b");
+        $routePart = new RoutePart("A#b");
         $this->assertEquals(
             "A",
-            $rp->controller(),
+            $routePart->controller(),
             "Controller was not parsed properly"
         );
         $this->assertEquals(
             "b",
-            $rp->action(),
+            $routePart->action(),
             "Action was not parsed properly"
         );
 

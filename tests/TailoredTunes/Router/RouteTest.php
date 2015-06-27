@@ -19,26 +19,26 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     {
         $config = array(Route::HANDLER => "A#b");
         $this->route->addConfig($config);
-        $r = $this->route->forVerb("GET");
-        $this->assertTrue($r instanceof RoutePart, "Not RouterPart given");
-        $this->assertEquals("A", $r->controller(), "Not the correct controller given");
-        $this->assertEquals("b", $r->action(), "Not the correct action given");
+        $route = $this->route->forVerb("GET");
+        $this->assertTrue($route instanceof RoutePart, "Not RouterPart given");
+        $this->assertEquals("A", $route->controller(), "Not the correct controller given");
+        $this->assertEquals("b", $route->action(), "Not the correct action given");
 
     }
 
     public function testRegex()
     {
         $expected = array("b" => "geza");
-        $a = new Route("/a/:b/c");
-        $actual = $a->parameters("/a/geza/c");
+        $route = new Route("/a/:b/c");
+        $actual = $route->parameters("/a/geza/c");
         $this->assertEquals($expected["b"], $actual["b"]);
     }
 
     public function testRegex2()
     {
         $expected = array("baby" => "geza");
-        $a = new Route("/:baby");
-        $actual = $a->parameters("/geza");
+        $route = new Route("/:baby");
+        $actual = $route->parameters("/geza");
         $this->assertEquals($expected["baby"], $actual["baby"]);
     }
 }
