@@ -26,13 +26,19 @@ class RequestParamsTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function setUp() {
+		$requestParams = $this->randomArray();
+		$sessionParams = $this->randomArray();
+		$serverParams = $this->randomArray();
+		$cookieParams = $this->randomArray();
+		$fileParams = $this->randomArray();
+		$envParams = $this->randomArray();
 		$this->params = [
-			'request' => new ImmutableSuperglobal($this->randomArray()),
-			'session' => new MutableSuperglobal($this->randomArray()),
-			'server'  => new ImmutableSuperglobal($this->randomArray()),
-			'cookies' => new MutableSuperglobal($this->randomArray()),
-			'files'   => new ImmutableSuperglobal($this->randomArray()),
-			'env'     => new ImmutableSuperglobal($this->randomArray()),
+			'request' => new ImmutableSuperglobal($requestParams),
+			'session' => new MutableSuperglobal($sessionParams),
+			'server'  => new ImmutableSuperglobal($serverParams),
+			'cookies' => new MutableSuperglobal($cookieParams),
+			'files'   => new ImmutableSuperglobal($fileParams),
+			'env'     => new ImmutableSuperglobal($envParams),
 		];
 
 		$methods = array_keys($this->params);
