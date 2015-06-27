@@ -45,17 +45,21 @@ class Router {
 	}
 
 	/**
-	 * @param string $uri
-	 * @param string $httpMethod
+	 * @param string        $originalUri
+	 * @param string        $httpMethod
 	 *
-	 * @param array  $params
+	 * @param RequestParams $params
 	 *
 	 * @return RoutePart
 	 *
 	 * @throws PathNotFoundException When it was not possible to find a matching route.
 	 */
-	public function handle($uri, $httpMethod, array $params = []) {
-		$uri = $this->stripTrailingSlash($uri);
+	public function handle($originalUri, $httpMethod, RequestParams $params = null) {
+		if ($params === null) {
+			$params = new RequestParams(new RequestParamBuilder());
+		}
+
+		$uri = $this->stripTrailingSlash($originalUri);
 
 		$uri = $this->removeQueryParametersFromTheUri($uri);
 
@@ -65,8 +69,23 @@ class Router {
 		$route = $this->getRouteForUriAndMethod($httpMethod, $effectiveUri);
 
 		$handler = $this->getHandlerForUri($httpMethod, $route, $effectiveUri);
-		$handler->addParameters($route->parameters($uri));
-		$handler->addParameters($params);
+
+		$uriParams = $route->parameters($uri);
+
+		foreach ($uriParams as $name => $value) {
+			$params->add($name, $value);
+		}
+
+		$originalUrl = parse_url($originalUri);
+		if (array_key_exists('query', $originalUrl)) {
+			parse_str($originalUrl['query'], $queryParams);
+
+			foreach ($queryParams as $name => $value) {
+				$params->add($name, $value);
+			}
+		}
+
+		$handler->setParameters($params);
 
 		return $handler;
 	}

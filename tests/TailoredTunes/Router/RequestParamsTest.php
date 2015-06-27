@@ -11,36 +11,99 @@ class RequestParamsTest extends PHPUnit_Framework_TestCase {
 	 */
 	private $random;
 
+	/**
+	 * @var array
+	 */
+	private $params;
+
+	/**
+	 * @var RequestParamBuilder
+	 */
+	private $builder;
+
 	public function __construct() {
 		$this->random = new RandomGenerator();
 	}
 
-	public function testCreation() {
-		$params = [
+	public function setUp() {
+		$this->params = [
 			'request' => new ImmutableSuperglobal($this->randomArray()),
 			'session' => new MutableSuperglobal($this->randomArray()),
 			'server'  => new ImmutableSuperglobal($this->randomArray()),
 			'cookies' => new MutableSuperglobal($this->randomArray()),
 			'files'   => new ImmutableSuperglobal($this->randomArray()),
+			'env'     => new ImmutableSuperglobal($this->randomArray()),
 		];
 
-		$builder = $this->getMockBuilder('\TailoredTunes\Router\RequestParamBuilder')
-						->setMethods(array_keys($params))
-						->disableArgumentCloning()
-						->disableOriginalClone()
-						->disableOriginalConstructor()
-						->disableProxyingToOriginalMethods()
-						->getMock();
+		$methods = array_keys($this->params);
+		$this->builder = $this->getMockBuilder('\TailoredTunes\Router\RequestParamBuilder')
+							  ->setMethods($methods)
+							  ->disableArgumentCloning()
+							  ->disableOriginalClone()
+							  ->disableOriginalConstructor()
+							  ->disableProxyingToOriginalMethods()
+							  ->getMock();
+	}
 
-		foreach ($params as $key => $value) {
-			$builder->expects($this->once())->method($key)->will($this->returnValue($value));
+	public function testCreation() {
+		foreach ($this->params as $key => $value) {
+			$this->builder->expects($this->once())->method($key)->will($this->returnValue($value));
 		}
 
-		$stuff = new RequestParams($builder);
+		$requestParams = new RequestParams($this->builder);
 
-		foreach ($params as $key => $value) {
-			$this->assertEquals($value, $stuff->$key(), $key . ' was not returned properly');
+		foreach ($this->params as $key => $value) {
+			$this->assertEquals($value, $requestParams->$key(), $key . ' was not returned properly');
 		}
+	}
+
+	public function testAddDynamicParams() {
+		$requestParams = new RequestParams($this->builder);
+
+		$key = $this->random->randomText();
+		$value = $this->random->randomText();
+
+		$requestParams->add($key, $value);
+
+		$actual = $requestParams->get($key, '');
+		$this->assertEquals($value, $actual);
+	}
+
+	public function testHasParam() {
+		$requestParams = new RequestParams($this->builder);
+
+		$key = $this->random->randomText();
+		$value = $this->random->randomText();
+
+		$requestParams->add($key, $value);
+
+		$this->assertTrue($requestParams->has($key));
+		$this->assertFalse($requestParams->has('notExistingKey'));
+	}
+
+	public function testGetParamFallback() {
+		$requestParams = new RequestParams($this->builder);
+		$fallback = $this->random->randomText();
+
+		$actual = $requestParams->get('nonExistingKey', $fallback);
+
+		$this->assertEquals($fallback, $actual);
+	}
+
+	public function testGetParamCallback() {
+		$requestParams = new RequestParams($this->builder);
+		$notExistingKey = $this->random->randomText();
+		$fallbackValue = $this->random->randomText();
+
+		$fallback = function ($key) use ($fallbackValue, $notExistingKey) {
+			$this->assertEquals($notExistingKey, $key);
+
+			return $fallbackValue;
+		};
+
+		$actual = $requestParams->get($notExistingKey, $fallback);
+
+		$this->assertEquals($fallbackValue, $actual);
 	}
 
 	/**

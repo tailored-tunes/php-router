@@ -14,9 +14,9 @@ class RoutePart {
 	private $action;
 
 	/**
-	 * @var array
+	 * @var RequestParams
 	 */
-	private $paramteres = [];
+	private $paramteres;
 
 	/**
 	 * @param string $routeString
@@ -42,16 +42,18 @@ class RoutePart {
 	}
 
 	/**
-	 * @param array $params
+	 * @param RequestParams $params
 	 *
 	 * @return void
 	 */
-	public function addParameters(array $params) {
-		$this->paramteres = array_merge($this->paramteres, $params);
+	public function setParameters(RequestParams $params) {
+		if ($this->paramteres === null) {
+			$this->paramteres = $params;
+		}
 	}
 
 	/**
-	 * @return array
+	 * @return RequestParams
 	 */
 	public function parameters() {
 		return $this->paramteres;

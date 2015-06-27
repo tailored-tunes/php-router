@@ -1,6 +1,8 @@
 <?php
 namespace TailoredTunes\Router;
 
+use TailoredTunes\RandomGenerator;
+
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
@@ -8,19 +10,26 @@ namespace TailoredTunes\Router;
 class RouterTest extends \PHPUnit_Framework_TestCase {
 
 	/**
+	 * @var Router
+	 */
+	protected $object;
+	/**
 	 * @var RouteParameterMatchGenerator
 	 */
 	private $matcher;
 	/**
-	 * @var Router
+	 * @var RandomGenerator
 	 */
-	protected $object;
+	private $random;
+
+	public function __construct() {
+		$this->random = new RandomGenerator();
+	}
 
 	public function setUp() {
 		$this->matcher = new RouteParameterMatchGenerator();
 		$this->object = new Router($this->matcher);
 		$this->object->addRoutes($this->setUpRoutingTable());
-
 	}
 
 	public function testSimpleRoute() {
@@ -142,14 +151,60 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
 		$this->object->handle('/something', 'POST');
 	}
 
+	public function testPathParams() {
+		$id = '10';
+		$name = 'Ted';
+
+		$actual = $this->object->handle(
+			sprintf('/%s/%s', $id, $name),
+			'GET'
+		);
+
+		$this->assertEquals(
+			$id,
+			$actual->parameters()->get('a', null),
+			'Path parameters not resolved'
+		);
+
+		$this->assertEquals(
+			$name,
+			$actual->parameters()->get('b', null),
+			'Path parameters not resolved'
+		);
+	}
+
+	public function testSuperglobals() {
+		$envVariableName = $this->random->randomText();
+		$envVariableValue = $this->random->randomText();
+
+		$env = [
+			$envVariableName => $envVariableValue
+		];
+
+		$builder = new RequestParamBuilder();
+		$builder->withEnv($env);
+
+		$requestParams = new RequestParams($builder);
+
+		$actual = $this->object->handle(
+			'/a/y',
+			'GET',
+			$requestParams
+		);
+
+		$this->assertEquals(
+			$envVariableValue,
+			$actual->parameters()->env()->get($envVariableName, null)
+		);
+	}
+
 	public function testParams() {
 		$expected = new RoutePart('Index#handle');
 		$param = 'Lucy';
-		$expected->addParameters(['x' => $param]);
+
 		$actual = $this->object->handle(
 			'/a/y?x=' . $param,
-			'GET',
-			['x' => $param]
+			'GET'
 		);
 		$this->assertEquals(
 			$expected->controller(),
@@ -162,8 +217,8 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
 			'Route action was not resolved correctly'
 		);
 		$this->assertEquals(
-			$expected->parameters(),
-			$actual->parameters(),
+			$param,
+			$actual->parameters()->get('x', null),
 			'Parameters not resolved'
 		);
 	}
