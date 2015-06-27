@@ -58,7 +58,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
     public function testSimpleRoute31()
     {
         $expected = new RoutePart("Index#handle2");
@@ -157,23 +156,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
             $actual->parameters(),
             "Parameters not resolved"
         );
-    }
-
-    /**
-     * @expectedException Exception
-     */
-    public function testNonemptyCreation()
-    {
-        $this->object->addRoutes();
-    }
-
-    /**
-     * @dataProvider      provider()
-     * @expectedException Exception
-     */
-    public function testFaultyCreation($param)
-    {
-        $this->object->addRoutes($param);
     }
 
     public function provider()
