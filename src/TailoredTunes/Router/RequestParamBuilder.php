@@ -94,7 +94,7 @@ class RequestParamBuilder {
 	 *
 	 * @return RequestParamBuilder
 	 */
-	public function withSession(array $data) {
+	public function withSession(array &$data) {
 		$this->session = new MutableSuperglobal($data);
 
 		return $this;
@@ -116,7 +116,7 @@ class RequestParamBuilder {
 	 *
 	 * @return RequestParamBuilder
 	 */
-	public function withCookies(array $data) {
+	public function withCookies(array &$data) {
 		$this->cookies = new MutableSuperglobal($data);
 
 		return $this;
