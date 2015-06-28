@@ -17,6 +17,18 @@ final class ImmutableSuperglobal extends SuperglobalAdapter {
 		throw new CannotWriteToImmutableSuperglobalException();
 	}
 
+	/**
+	 * @param string $key
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+	 *
+	 * @return void
+	 * @throws CannotWriteToImmutableSuperglobalException Cannot modify.
+	 */
+	public function delete($key) {
+		throw new CannotWriteToImmutableSuperglobalException();
+	}
+
 }
 
 ?>

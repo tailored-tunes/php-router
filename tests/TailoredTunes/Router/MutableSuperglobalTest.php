@@ -25,6 +25,16 @@ class MutableSuperglobalTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($mySession[$key], $value);
 	}
 
+	public function testUnset() {
+		$mySession = [];
+		$sess = new MutableSuperglobal($mySession);
+		$key = $this->random->randomText();
+		$value = $this->random->randomText();
+		$sess->set($key, $value);
+		$sess->delete($key);
+		$this->assertFalse(array_key_exists($key, $mySession));
+	}
+
 	public function testGet() {
 		$key = $this->random->randomText();
 		$value = $this->random->randomText();

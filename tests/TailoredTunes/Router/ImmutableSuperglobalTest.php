@@ -24,8 +24,20 @@ class ImmutableSuperglobalTest extends \PHPUnit_Framework_TestCase {
 		$key = $this->random->randomText();
 		$value = $this->random->randomText();
 		$sess->set($key, $value);
+	}
 
-		$this->assertEquals($mySession[$key], $value);
+	/**
+	 * @expectedException \TailoredTunes\Router\CannotWriteToImmutableSuperglobalException
+	 */
+	public function testUnsetDoesNotActuallyUnset() {
+		$key = $this->random->randomText();
+		$value = $this->random->randomText();
+		$mySession = [
+			$key => $value
+		];
+		$sess = new ImmutableSuperglobal($mySession);
+
+		$sess->delete($key);
 	}
 
 	public function testGet() {

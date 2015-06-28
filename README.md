@@ -18,11 +18,11 @@ use TailoredTunes\Router;
 $router = new Router();
 $router->addRoutes(
 	[
-		array("/" => "Home#index"),
-		array("/login" => "Home#login"),
-		array("/logout" => "Home#logout"),
-		array("/privacy" => "Home#privacy"),
-		array("/magic/:var1/:var2" => "Home#magic")
+		["/" => "Home#index"],
+		["/login" => "Home#login"],
+		["/logout" => "Home#logout"],
+		["/privacy" => "Home#privacy"],
+		["/magic/:var1/:var2" => "Home#magic"]
     ]
 );
 ```

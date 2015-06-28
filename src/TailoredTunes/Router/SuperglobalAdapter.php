@@ -28,6 +28,15 @@ abstract class SuperglobalAdapter {
 
 	/**
 	 * @param string $key
+	 *
+	 * @return void
+	 */
+	public function delete($key) {
+		unset($this->storage[$key]);
+	}
+
+	/**
+	 * @param string $key
 	 * @param string $defaultValue
 	 *
 	 * @return mixed
